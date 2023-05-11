@@ -21,7 +21,7 @@ public:
 	King(): Piece()
 	{}
 
-	King(const Position& pos, const bool& color): Piece(pos, color)
+	King(const bool& color): Piece(color)
 	{}
 };
 
@@ -35,7 +35,7 @@ public:
 	Queen() : Piece()
 	{}
 
-	Queen(const Position& pos, const bool& color) : Piece(pos, color)
+	Queen(const bool& color) : Piece(color)
 	{}
 };
 
@@ -49,7 +49,7 @@ public:
 	Bishop() : Piece()
 	{}
 
-	Bishop(const Position& pos, const bool& color) : Piece(pos, color)
+	Bishop(const bool& color) : Piece(color)
 	{}
 };
 
@@ -63,7 +63,7 @@ public:
 	Knight() : Piece()
 	{}
 
-	Knight(const Position& pos, const bool& color) : Piece(pos, color)
+	Knight(const bool& color) : Piece(color)
 	{}
 };
 
@@ -77,7 +77,7 @@ public:
 	Rook() : Piece()
 	{}
 
-	Rook(const Position& pos, const bool& color) : Piece(pos, color)
+	Rook(const bool& color) : Piece(color)
 	{}
 };
 
@@ -91,6 +91,6 @@ public:
 	Pawn() : Piece()
 	{}
 
-	Pawn(const Position& pos, const bool& color) : Piece(pos, color)
+	Pawn(const bool& color) : Piece(color)
 	{}
 };

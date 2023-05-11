@@ -14,4 +14,5 @@ int main()
 
 	Game game;
 	game.move("dupa");
+	game.~Game();
 }

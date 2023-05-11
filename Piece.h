@@ -7,11 +7,10 @@ class Piece
 {
 protected:
 	std::vector<Position> validMoves;
-	Position pos;
 	bool color;
-	Piece(): pos() 
+	Piece()
 	{}
-	Piece(const Position& pos, const bool& color) : pos(pos), color(color)
+	Piece(const bool& color): color(color)
 	{}
 public: 
 	bool getColor() { return color;  }

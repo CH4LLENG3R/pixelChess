@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <typeinfo>
 
 #include "Settings.h"
 #include "Clock.h"
@@ -38,24 +39,36 @@ public:
 		std::string basicFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 		FENHandler fenHandler(basicFEN);
 
-		std::vector<Piece*> arrangementVec = fenHandler.getArrangement();
+		std::vector<std::pair<Piece*, Position>> arrangementVec = fenHandler.getArrangement();
 
-		for (Piece* p : arrangementVec)
+		int x, y;
+		for (std::pair<Piece*, Position> p : arrangementVec)
 		{
+			x = p.second.x;
+			y = p.second.y;
 
+			arrangement[y][x].reset(p.first);
+
+			if (typeid(King) == typeid(*p.first))
+			{
+				if (p.first->getColor() == 1)
+					whiteKing.reset(p.first);
+				else
+					blackKing.reset(p.first);
+			}
 		}
 	}
 
 	~Game()
 	{
-		whiteKing.reset();
-		blackKing.reset();
 		for (size_t y = 0; y < 8; y++)
 		{
 			for (size_t x = 0; x < 8; x++)
 				arrangement[y][x].reset();
 			delete[] arrangement[y];
 		}
+		whiteKing.reset();
+		blackKing.reset();
 		delete[] arrangement;
 	}
 };

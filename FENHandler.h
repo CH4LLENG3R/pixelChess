@@ -5,13 +5,14 @@
 
 #include "Figures.h"
 #include "GameVariables.h"
+#include "Position.h"
 
 class FENHandler
 {
-	std::vector<Piece*> arrangement;
+	std::vector<std::pair<Piece*, Position>> arrangement;
 	GameVariables variables;
 public:
-	std::vector<Piece*> getArrangement() { return arrangement; }
+	std::vector<std::pair<Piece*, Position>> getArrangement() { return arrangement; }
 
 	FENHandler(std::string FEN)
 	{
@@ -25,40 +26,40 @@ public:
 			switch (FEN[i])
 			{
 			case 'r':
-				arrangement.push_back(new Rook(Position(x, y), 0));
+				arrangement.push_back(std::pair<Piece*, Position>(new Rook(0), Position(x, y)));
 				break;
 			case 'n':
-				arrangement.push_back(new Knight(Position(x, y), 0));
+				arrangement.push_back(std::pair<Piece*, Position>(new Knight(0), Position(x, y)));
 				break;
 			case 'b':
-				arrangement.push_back(new Bishop(Position(x, y), 0));
+				arrangement.push_back(std::pair<Piece*, Position>(new Bishop(0), Position(x, y)));
 				break;
 			case 'q':
-				arrangement.push_back(new Queen(Position(x, y), 0));
+				arrangement.push_back(std::pair<Piece*, Position>(new Queen(0), Position(x, y)));
 				break;
 			case 'k':
-				arrangement.push_back(new King(Position(x, y), 0));
+				arrangement.push_back(std::pair<Piece*, Position>(new King(0), Position(x, y)));
 				break;
 			case 'p':
-				arrangement.push_back(new Pawn(Position(x, y), 0));
+				arrangement.push_back(std::pair<Piece*, Position>(new Pawn(0), Position(x, y)));
 				break;
 			case 'R':
-				arrangement.push_back(new Rook(Position(x, y), 1));
+				arrangement.push_back(std::pair<Piece*, Position>(new Rook(1), Position(x, y)));
 				break;
 			case 'N':
-				arrangement.push_back(new Knight(Position(x, y), 1));
+				arrangement.push_back(std::pair<Piece*, Position>(new Knight(1), Position(x, y)));
 				break;
 			case 'B':
-				arrangement.push_back(new Bishop(Position(x, y), 1));
+				arrangement.push_back(std::pair<Piece*, Position>(new Bishop(1), Position(x, y)));
 				break;
 			case 'Q':
-				arrangement.push_back(new Queen(Position(x, y), 1));
+				arrangement.push_back(std::pair<Piece*, Position>(new Queen(1), Position(x, y)));
 				break;
 			case 'K':
-				arrangement.push_back(new King(Position(x, y), 1));
+				arrangement.push_back(std::pair<Piece*, Position>(new King(1), Position(x, y)));
 				break;
 			case 'P':
-				arrangement.push_back(new Pawn(Position(x, y), 1));
+				arrangement.push_back(std::pair<Piece*, Position>(new Pawn(1), Position(x, y)));
 				break;
 			case '/':
 				x = 0;
