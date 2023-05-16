@@ -6,13 +6,31 @@
 
 int main()
 {
-	_setmode(_fileno(stdout), _O_U8TEXT);
-	std::wcout << L'\u2654' << ' ' << L'\u2655' << ' ' << L'\u2656' << ' '
-		<< L'\u2657' << ' ' << L'\u2658' << ' ' << L'\u2659' << std::endl;
-	std::wcout << L'\u265A' << ' ' << L'\u265B' << ' ' << L'\u265C' << ' '
-		<< L'\u265D' << ' ' << L'\u265E' << ' ' << L'\u265F' << std::endl;
-
 	Game game;
 	game.move("dupa");
-	game.~Game();
+	int xf, yf, xt, yt;
+	bool move_OK;
+	std::vector<Position> availibleMoves;
+	for (int i = 0; i < 10; i++)
+	{
+		game.debug();
+		std::cout << "from: ";
+		std::cin >> xf >> yf;
+
+		std::cout << "availible moves:\n";
+		availibleMoves = game.getPieceMoves(xf, yf);
+		for (Position p : availibleMoves)
+		{
+			std::cout << '(' << p.x << ", " << p.y << ") ";
+		}
+		std::cout << '\n';
+
+		std::cout << "to: ";
+		std::cin >> xt >> yt;
+		move_OK = game.move(Position(xf, yf), Position(xt, yt));
+		if (!move_OK)
+			std::cout << "incorrect move\n";
+
+		std::cout << "FEN: " << game.getFEN() << '\n';
+	}
 }

@@ -138,6 +138,7 @@
     <ClInclude Include="GameVariables.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Piece.h" />
+    <ClInclude Include="PieceTypes.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Settings.h" />
   </ItemGroup>

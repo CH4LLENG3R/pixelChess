@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <regex>
+#include <stdexcept>
 
 #include "Figures.h"
 #include "GameVariables.h"
@@ -9,13 +11,24 @@
 
 class FENHandler
 {
-	std::vector<std::pair<Piece*, Position>> arrangement;
+	std::vector<Piece*> arrangement;
 	GameVariables variables;
 public:
-	std::vector<std::pair<Piece*, Position>> getArrangement() { return arrangement; }
+	std::vector<Piece*> getArrangement() { return arrangement; }
+
+	bool isFENValid(std::string FEN)
+	{
+		return std::regex_match(FEN, std::regex("^([pnbrqkPNBRQK1-8]{1,8}\\/?){8}\\s+(b|w)\\s+(-|K?Q?k?q)\\s+(-|[a-h][3-6])\\s+(\\d+)\\s+(\\d+)\\s*$", std::regex_constants::ECMAScript | std::regex_constants::icase));
+	}
 
 	FENHandler(std::string FEN)
 	{
+		if (!isFENValid(FEN))
+		{
+			throw std::invalid_argument("FEN is invalid");
+			return;
+		}
+
 		// get arrangement
 		int y = 7;
 		int x = 0;
@@ -26,40 +39,40 @@ public:
 			switch (FEN[i])
 			{
 			case 'r':
-				arrangement.push_back(std::pair<Piece*, Position>(new Rook(0), Position(x, y)));
+				arrangement.push_back(new Rook(Position(x, y), 0));
 				break;
 			case 'n':
-				arrangement.push_back(std::pair<Piece*, Position>(new Knight(0), Position(x, y)));
+				arrangement.push_back(new Knight(Position(x, y), 0));
 				break;
 			case 'b':
-				arrangement.push_back(std::pair<Piece*, Position>(new Bishop(0), Position(x, y)));
+				arrangement.push_back(new Bishop(Position(x, y), 0));
 				break;
 			case 'q':
-				arrangement.push_back(std::pair<Piece*, Position>(new Queen(0), Position(x, y)));
+				arrangement.push_back(new Queen(Position(x, y), 0));
 				break;
 			case 'k':
-				arrangement.push_back(std::pair<Piece*, Position>(new King(0), Position(x, y)));
+				arrangement.push_back(new King(Position(x, y), 0));
 				break;
 			case 'p':
-				arrangement.push_back(std::pair<Piece*, Position>(new Pawn(0), Position(x, y)));
+				arrangement.push_back(new Pawn(Position(x, y), 0));
 				break;
 			case 'R':
-				arrangement.push_back(std::pair<Piece*, Position>(new Rook(1), Position(x, y)));
+				arrangement.push_back(new Rook(Position(x, y), 1));
 				break;
 			case 'N':
-				arrangement.push_back(std::pair<Piece*, Position>(new Knight(1), Position(x, y)));
+				arrangement.push_back(new Knight(Position(x, y), 1));
 				break;
 			case 'B':
-				arrangement.push_back(std::pair<Piece*, Position>(new Bishop(1), Position(x, y)));
+				arrangement.push_back(new Bishop(Position(x, y), 1));
 				break;
 			case 'Q':
-				arrangement.push_back(std::pair<Piece*, Position>(new Queen(1), Position(x, y)));
+				arrangement.push_back(new Queen(Position(x, y), 1));
 				break;
 			case 'K':
-				arrangement.push_back(std::pair<Piece*, Position>(new King(1), Position(x, y)));
+				arrangement.push_back(new King(Position(x, y), 1));
 				break;
 			case 'P':
-				arrangement.push_back(std::pair<Piece*, Position>(new Pawn(1), Position(x, y)));
+				arrangement.push_back(new Pawn(Position(x, y), 1));
 				break;
 			case '/':
 				x = 0;
@@ -146,6 +159,73 @@ public:
 			variables.fullMoveNumber += FEN[i] - 48;
 			i++;
 		}
+	}
+
+	static std::string getFEN(std::shared_ptr<Piece>** arrangement,const GameVariables& variables)
+	{
+		std::string FEN;
+		int freeSpaces;
+		for (short y = 7; y >= 0; y--)
+		{
+			freeSpaces = 0;
+			for (short x = 0; x < 8; x++)
+			{
+				if (arrangement[y][x] == nullptr)
+				{
+					freeSpaces++;
+					continue;
+				}
+
+				if (freeSpaces != 0)
+				{
+					FEN += char(freeSpaces + '0');
+					freeSpaces = 0;
+				}
+				
+				Piece p = *arrangement[y][x];
+
+				if (p.getColor() == 1)
+				{
+					if (p.getPieceType() == pc::Pawn)
+						FEN.append("P");
+					else if (p.getPieceType() == pc::Rook)
+						FEN.append("R");
+					else if (p.getPieceType() == pc::Knight)
+						FEN.append("N");
+					else if (p.getPieceType() == pc::Bishop)
+						FEN.append("B");
+					else if (p.getPieceType() == pc::Queen)
+						FEN.append("Q");
+					else if (p.getPieceType() == pc::King)
+						FEN.append("K");
+				}
+				else
+				{
+					if (p.getPieceType() == pc::Pawn)
+						FEN.append("p");
+					else if (p.getPieceType() == pc::Rook)
+						FEN.append("r");
+					else if (p.getPieceType() == pc::Knight)
+						FEN.append("n");
+					else if (p.getPieceType() == pc::Bishop)
+						FEN.append("b");
+					else if (p.getPieceType() == pc::Queen)
+						FEN.append("q");
+					else if (p.getPieceType() == pc::King)
+						FEN.append("k");
+				}
+			}
+
+			if (freeSpaces != 0)
+			{
+				FEN += char(freeSpaces + '0');
+				freeSpaces = 0;
+			}
+
+			FEN.append("/");
+		}
+
+		return FEN;
 	}
 };
 

@@ -10,4 +10,9 @@ struct Position
 
 	Position(const short& x, const short& y) : x(x), y(y)
 	{}
+
+	bool operator==(Position& pos)
+	{
+		return x == pos.x && y == pos.y;
+	}
 };

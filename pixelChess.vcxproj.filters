@@ -53,5 +53,8 @@
     <ClInclude Include="GameVariables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PieceTypes.h">
+      <Filter>Header Files\BoardElement</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
