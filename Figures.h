@@ -508,7 +508,32 @@ class Knight : public Piece
 {
 	std::vector<Position> getMoves(std::shared_ptr<Piece>** arrangement) override
 	{
-		return std::vector<Position>();
+		std::vector<Position> moves;
+		if (posInBorder(pos.x - 1, pos.y + 2) && (arrangement[pos.y + 2][pos.x - 1] == nullptr || arrangement[pos.y + 2][pos.x - 1]->getColor() != color))
+			moves.push_back(Position(pos.x - 1, pos.y + 2));
+
+		if (posInBorder(pos.x + 1, pos.y + 2) && (arrangement[pos.y + 2][pos.x + 1] == nullptr || arrangement[pos.y + 2][pos.x + 1]->getColor() != color))
+			moves.push_back(Position(pos.x + 1, pos.y + 2));
+
+		if (posInBorder(pos.x + 2, pos.y + 1) && (arrangement[pos.y + 1][pos.x + 2] == nullptr || arrangement[pos.y + 1][pos.x + 2]->getColor() != color))
+			moves.push_back(Position(pos.x + 2, pos.y + 1));
+
+		if (posInBorder(pos.x + 2, pos.y - 1) && (arrangement[pos.y - 1][pos.x + 2] == nullptr || arrangement[pos.y - 1][pos.x + 2]->getColor() != color))
+			moves.push_back(Position(pos.x + 2, pos.y - 1));
+
+		if (posInBorder(pos.x + 1, pos.y - 2) && (arrangement[pos.y - 2][pos.x + 1] == nullptr || arrangement[pos.y - 2][pos.x + 1]->getColor() != color))
+			moves.push_back(Position(pos.x + 1, pos.y - 2));
+
+		if (posInBorder(pos.x - 1, pos.y - 2) && (arrangement[pos.y - 2][pos.x - 1] == nullptr || arrangement[pos.y - 2][pos.x - 1]->getColor() != color))
+			moves.push_back(Position(pos.x - 1, pos.y - 2));
+
+		if (posInBorder(pos.x - 2, pos.y - 1) && (arrangement[pos.y - 1][pos.x - 2] == nullptr || arrangement[pos.y - 1][pos.x - 2]->getColor() != color))
+			moves.push_back(Position(pos.x - 2, pos.y - 1));
+
+		if (posInBorder(pos.x - 2, pos.y + 1) && (arrangement[pos.y + 1][pos.x - 2] == nullptr || arrangement[pos.y + 1][pos.x - 2]->getColor() != color))
+			moves.push_back(Position(pos.x - 2, pos.y + 1));
+
+		return moves;
 	}
 public:
 	Knight() : Piece()
@@ -621,13 +646,30 @@ class Pawn : public Piece
 
 		if (color == 1 && arrangement[pos.y + 1][pos.x] == nullptr)
 			moves.push_back(Position(pos.x, pos.y + 1));
-		else if (arrangement[pos.y - 1][pos.x] == nullptr)
+		else if (color == 0 && arrangement[pos.y - 1][pos.x] == nullptr)
 			moves.push_back(Position(pos.x, pos.y - 1));
 
 		if (color == 1 && pos.y == 1 && arrangement[pos.y + 2][pos.x] == nullptr)
 			moves.push_back(Position(pos.x, pos.y + 2));
 		else if (color == 0 && pos.y == 6 && arrangement[pos.y - 2][pos.x] == nullptr)
 			moves.push_back(Position(pos.x, pos.y - 2));
+
+		// capture
+		if (color == 1)
+		{
+			if (pos.x > 0 && arrangement[pos.y + 1][pos.x - 1] != nullptr)
+				moves.push_back(Position(pos.x - 1, pos.y + 1));
+			if(pos.x < 7 && arrangement[pos.y + 1][pos.x + 1] != nullptr)
+				moves.push_back(Position(pos.x + 1, pos.y + 1));
+		}
+		else
+		{
+			if (pos.x > 0 && arrangement[pos.y - 1][pos.x - 1] != nullptr)
+				moves.push_back(Position(pos.x - 1, pos.y - 1));
+			if (pos.x < 7 && arrangement[pos.y - 1][pos.x + 1] != nullptr)
+				moves.push_back(Position(pos.x + 1, pos.y - 1));
+		}
+
 
 		return moves;
 	}

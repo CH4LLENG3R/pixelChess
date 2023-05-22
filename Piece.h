@@ -22,13 +22,16 @@ protected:
 	std::vector<Position> validMoves;
 
 	bool color;
+	bool taken;
 	pc::PieceType pieceType;
 	Position pos;
 	Piece(): pieceType(pc::PieceType::empty), pos()
 	{}
-	Piece(const Position& pos, const bool& color): pieceType(pc::PieceType::empty), color(color), pos(pos)
+	Piece(const Position& pos, const bool& color): pieceType(pc::PieceType::empty), color(color), taken(false), pos(pos)
 	{}
 public: 
+	void take() { taken = true; };
+	bool isTaken() { return taken; }
 	bool getColor() { return color;  }
 
 	pc::PieceType getPieceType() { return pieceType;  }
@@ -52,5 +55,10 @@ public:
 	{
 		return std::vector<Position>();
 	};
+
+	~Piece()
+	{
+		std::cout << "Piece deleted\n";
+	}
 };
 

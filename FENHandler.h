@@ -16,6 +16,8 @@ class FENHandler
 public:
 	std::vector<Piece*> getArrangement() { return arrangement; }
 
+	GameVariables getVariables() { return variables; }
+
 	bool isFENValid(std::string FEN)
 	{
 		return std::regex_match(FEN, std::regex("^([pnbrqkPNBRQK1-8]{1,8}\\/?){8}\\s+(b|w)\\s+(-|K?Q?k?q)\\s+(-|[a-h][3-6])\\s+(\\d+)\\s+(\\d+)\\s*$", std::regex_constants::ECMAScript | std::regex_constants::icase));
@@ -182,36 +184,36 @@ public:
 					freeSpaces = 0;
 				}
 				
-				Piece p = *arrangement[y][x];
+				Piece* p = arrangement[y][x].get();
 
-				if (p.getColor() == 1)
+				if (p->getColor() == 1)
 				{
-					if (p.getPieceType() == pc::Pawn)
+					if (p->getPieceType() == pc::Pawn)
 						FEN.append("P");
-					else if (p.getPieceType() == pc::Rook)
+					else if (p->getPieceType() == pc::Rook)
 						FEN.append("R");
-					else if (p.getPieceType() == pc::Knight)
+					else if (p->getPieceType() == pc::Knight)
 						FEN.append("N");
-					else if (p.getPieceType() == pc::Bishop)
+					else if (p->getPieceType() == pc::Bishop)
 						FEN.append("B");
-					else if (p.getPieceType() == pc::Queen)
+					else if (p->getPieceType() == pc::Queen)
 						FEN.append("Q");
-					else if (p.getPieceType() == pc::King)
+					else if (p->getPieceType() == pc::King)
 						FEN.append("K");
 				}
 				else
 				{
-					if (p.getPieceType() == pc::Pawn)
+					if (p->getPieceType() == pc::Pawn)
 						FEN.append("p");
-					else if (p.getPieceType() == pc::Rook)
+					else if (p->getPieceType() == pc::Rook)
 						FEN.append("r");
-					else if (p.getPieceType() == pc::Knight)
+					else if (p->getPieceType() == pc::Knight)
 						FEN.append("n");
-					else if (p.getPieceType() == pc::Bishop)
+					else if (p->getPieceType() == pc::Bishop)
 						FEN.append("b");
-					else if (p.getPieceType() == pc::Queen)
+					else if (p->getPieceType() == pc::Queen)
 						FEN.append("q");
-					else if (p.getPieceType() == pc::King)
+					else if (p->getPieceType() == pc::King)
 						FEN.append("k");
 				}
 			}
@@ -221,9 +223,53 @@ public:
 				FEN += char(freeSpaces + '0');
 				freeSpaces = 0;
 			}
-
-			FEN.append("/");
+			if (y > 0)
+				FEN.append("/");
 		}
+
+		FEN += ' ';
+
+		// FEN active color
+		if (variables.ActiveColor)
+			FEN += 'w';
+		else
+			FEN += 'b';
+
+		FEN += ' ';
+
+		//FEN Castling
+
+		if (variables.whiteCastleKingSideAvailible)
+			FEN += 'K';
+		if (variables.whiteCastleQueenSideAvailible)
+			FEN += 'Q';
+		if (!(variables.whiteCastleKingSideAvailible || variables.whiteCastleQueenSideAvailible))
+			FEN += '-';
+
+		if (variables.blackCastleKingSideAvailible)
+			FEN += 'k';
+		if (variables.blackCastleQueenSideAvailible)
+			FEN += 'q';
+		if (!(variables.blackCastleKingSideAvailible || variables.blackCastleQueenSideAvailible))
+			FEN += '-';
+
+		FEN += ' ';
+
+		//FEN en passant
+		if (!variables.enPassantAvailible)
+			FEN += '-';
+		else
+		{
+			FEN += char('a' + variables.enPassant.x);
+			FEN += char('1' + variables.enPassant.y);
+		}
+
+		FEN += ' ';
+
+		// clocks
+		FEN.append(std::to_string(variables.halfMoveClock));
+		FEN += ' ';
+		FEN.append(std::to_string(variables.fullMoveNumber));
 
 		return FEN;
 	}
