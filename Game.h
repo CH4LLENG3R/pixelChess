@@ -27,8 +27,30 @@ private:
 		for (std::shared_ptr<Piece> p : arrangementVec)
 		{
 			Piece* piece = p.get();
-			if(!piece->isTaken())
-				piece->setValidMoves(piece->getMoves(arrangement));
+			std::vector<Position> moves = piece->getMoves(arrangement);
+
+
+			if (variables.enPassantAvailible)
+			{
+				Position enPpos = variables.enPassant;
+				if (variables.ActiveColor)
+				{
+					if (enPpos.x > 0 && arrangement[enPpos.y - 1][enPpos.x - 1] != nullptr && arrangement[enPpos.y - 1][enPpos.x - 1]->getPieceType() == pc::Pawn && arrangement[enPpos.y - 1][enPpos.x - 1]->getColor() == 1)
+						moves.push_back(enPpos);
+					if (enPpos.x < 7 && arrangement[enPpos.y - 1][enPpos.x + 1] != nullptr && arrangement[enPpos.y - 1][enPpos.x + 1]->getPieceType() == pc::Pawn && arrangement[enPpos.y - 1][enPpos.x + 1]->getColor() == 1)
+						moves.push_back(enPpos);
+				}
+				else
+				{
+					if (enPpos.x > 0 && arrangement[enPpos.y + 1][enPpos.x - 1] != nullptr && arrangement[enPpos.y + 1][enPpos.x - 1]->getPieceType() == pc::Pawn && arrangement[enPpos.y + 1][enPpos.x - 1]->getColor() == 0)
+						moves.push_back(enPpos);
+					if (enPpos.x < 7 && arrangement[enPpos.y + 1][enPpos.x + 1] != nullptr && arrangement[enPpos.y + 1][enPpos.x + 1]->getPieceType() == pc::Pawn && arrangement[enPpos.y + 1][enPpos.x + 1]->getColor() == 0)
+						moves.push_back(enPpos);
+				}
+			}
+
+			if (!piece->isTaken())
+				piece->setValidMoves(moves);
 		}
 	}
 
@@ -45,7 +67,7 @@ public:
 	std::vector<Position> getPieceMoves(short x, short y)
 	{
 		if (isFigure(Position(x, y)))
-			return arrangement[y][x]->getMoves(arrangement);
+			return arrangement[y][x]->getValidMoves();
 		else
 			return std::vector<Position>();
 	}
@@ -65,7 +87,6 @@ public:
 
 	bool move(Position from, Position to, char promoteTo = 'Q')
 	{
-		processValidMoves();
 		//chech if move is valid
 		if (!isFigure(from))
 			return false;
@@ -81,6 +102,14 @@ public:
 		//update game variables
 
 		//en passant
+		if (to == variables.enPassant && arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
+		{
+			if (variables.ActiveColor)
+				arrangement[to.y - 1][to.x].reset();
+			else
+				arrangement[to.y + 1][to.x].reset();
+		}
+
 		if (arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
 		{
 			variables.enPassantAvailible = false;
@@ -189,6 +218,7 @@ public:
 
 		//swap turn
 		variables.ActiveColor = !variables.ActiveColor;
+		processValidMoves();
 
 		return true;
 	}
@@ -294,6 +324,8 @@ public:
 					blackKing = std::dynamic_pointer_cast<King>(arrangement[y][x]);
 			}
 		}
+
+		processValidMoves();
 	}
 
 	~Game()

@@ -130,7 +130,7 @@ public:
 			if (arrangement[pos.y][x].get()->getColor() == color)
 				break;
 
-			otherType = arrangement[pos.x][x].get()->getPieceType();
+			otherType = arrangement[pos.y][x].get()->getPieceType();
 			if (otherType == pc::Queen || otherType == pc::Rook)
 				return true;
 		}
@@ -143,7 +143,7 @@ public:
 			if (arrangement[pos.y][x].get()->getColor() == color)
 				break;
 
-			otherType = arrangement[pos.x][x].get()->getPieceType();
+			otherType = arrangement[pos.y][x].get()->getPieceType();
 			if (otherType == pc::Queen || otherType == pc::Rook)
 				return true;
 		}
