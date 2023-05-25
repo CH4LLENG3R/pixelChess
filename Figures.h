@@ -3,6 +3,7 @@
 
 class King : public Piece
 {
+public:
 	std::vector<Position> getMoves(std::shared_ptr<Piece>** arrangement) override
 	{
 
@@ -25,7 +26,7 @@ class King : public Piece
 
 		return res;
 	}
-public:
+
 	King() : Piece()
 	{
 		pieceType = pc::PieceType::King;
@@ -215,6 +216,30 @@ public:
 
 		return false;
 		
+	}
+
+	bool isKingSideCastlingAvailible(std::shared_ptr<Piece>** arrangement)
+	{
+		for (short x = pos.x + 1; x < 8; x++)
+		{
+			if (arrangement[pos.y][x] == nullptr)
+				continue;
+			if (arrangement[pos.y][x]->getPieceType() == pc::Rook && arrangement[pos.y][x]->getColor() == color && x == 7)
+				return true;
+			return false;
+		}
+	}
+
+	bool isQueenSideCastlingAvailible(std::shared_ptr<Piece>** arrangement)
+	{
+		for (short x = pos.x - 1; x >= 0; x--)
+		{
+			if (arrangement[pos.y][x] == nullptr)
+				continue;
+			if (arrangement[pos.y][x]->getPieceType() == pc::Rook && arrangement[pos.y][x]->getColor() == color && x == 0)
+				return true;
+			return false;
+		}
 	}
 
 	bool isCheckmated(std::shared_ptr<Piece>** arrangement)
@@ -657,16 +682,16 @@ class Pawn : public Piece
 		// capture
 		if (color == 1)
 		{
-			if (pos.x > 0 && arrangement[pos.y + 1][pos.x - 1] != nullptr)
+			if (pos.x > 0 && arrangement[pos.y + 1][pos.x - 1] != nullptr && arrangement[pos.y + 1][pos.x - 1]->getColor() != color)
 				moves.push_back(Position(pos.x - 1, pos.y + 1));
-			if(pos.x < 7 && arrangement[pos.y + 1][pos.x + 1] != nullptr)
+			if(pos.x < 7 && arrangement[pos.y + 1][pos.x + 1] != nullptr && arrangement[pos.y + 1][pos.x + 1]->getColor() != color)
 				moves.push_back(Position(pos.x + 1, pos.y + 1));
 		}
 		else
 		{
-			if (pos.x > 0 && arrangement[pos.y - 1][pos.x - 1] != nullptr)
+			if (pos.x > 0 && arrangement[pos.y - 1][pos.x - 1] != nullptr && arrangement[pos.y - 1][pos.x - 1]->getColor() != color)
 				moves.push_back(Position(pos.x - 1, pos.y - 1));
-			if (pos.x < 7 && arrangement[pos.y - 1][pos.x + 1] != nullptr)
+			if (pos.x < 7 && arrangement[pos.y - 1][pos.x + 1] != nullptr && arrangement[pos.y - 1][pos.x + 1]->getColor() != color)
 				moves.push_back(Position(pos.x + 1, pos.y - 1));
 		}
 

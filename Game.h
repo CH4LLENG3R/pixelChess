@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <typeinfo>
+#include <iostream>
 
 #include "Settings.h"
 #include "Clock.h"
@@ -29,7 +30,7 @@ private:
 			Piece* piece = p.get();
 			std::vector<Position> moves = piece->getMoves(arrangement);
 
-
+			// add en passant moves when available
 			if (variables.enPassantAvailible)
 			{
 				Position enPpos = variables.enPassant;
@@ -51,6 +52,60 @@ private:
 
 			if (!piece->isTaken())
 				piece->setValidMoves(moves);
+		}
+
+		// add castling moves when availible
+		std::vector<Position> moves;
+
+		if (variables.whiteCastleKingSideAvailible && whiteKing->isKingSideCastlingAvailible(arrangement))
+		{
+			moves = whiteKing->getMoves(arrangement);
+			moves.push_back(Position(whiteKing->getPosition().x + 2, whiteKing->getPosition().y));
+			whiteKing->setValidMoves(moves);
+		}
+		if (variables.whiteCastleQueenSideAvailible && whiteKing->isQueenSideCastlingAvailible(arrangement))
+		{
+			moves = whiteKing->getMoves(arrangement);
+			moves.push_back(Position(whiteKing->getPosition().x - 2, whiteKing->getPosition().y));
+			whiteKing->setValidMoves(moves);
+		}
+
+		if (variables.whiteCastleKingSideAvailible && blackKing->isKingSideCastlingAvailible(arrangement))
+		{
+			moves = blackKing->getMoves(arrangement);
+			moves.push_back(Position(blackKing->getPosition().x + 2, blackKing->getPosition().y));
+			blackKing->setValidMoves(moves);
+		}
+		if (variables.whiteCastleQueenSideAvailible && blackKing->isQueenSideCastlingAvailible(arrangement))
+		{
+			moves = blackKing->getMoves(arrangement);
+			moves.push_back(Position(blackKing->getPosition().x - 2, blackKing->getPosition().y));
+			blackKing->setValidMoves(moves);
+		}
+
+		// check if after move king is checked
+		std::shared_ptr<Piece>** arrangementCpy;
+		arrangementCpy = new std::shared_ptr<Piece>*[8];
+		for (size_t y = 0; y < 8; y++)
+		{
+			arrangementCpy[y] = new std::shared_ptr<Piece>[8];
+			for (size_t x = 0; x < 8; x++)
+			{
+				arrangementCpy[y][x];
+			}
+		}
+
+		for (std::shared_ptr<Piece> p : arrangementVec)
+		{
+			Piece* piece = p.get();
+			if (piece->getColor())
+			{
+				std::vector<Position> moves = piece->getMoves(arrangement);
+				for (int i = 0; i < moves.size(); i++)
+				{
+
+				}
+			}
 		}
 	}
 
@@ -89,6 +144,9 @@ public:
 	{
 		//chech if move is valid
 		if (!isFigure(from))
+			return false;
+
+		if (arrangement[from.y][from.x]->getColor() != variables.ActiveColor)
 			return false;
 
 		bool valid = false;
@@ -168,6 +226,24 @@ public:
 			}
 		}
 
+		if (arrangement[to.y][to.x] != nullptr && arrangement[to.y][to.x]->getPieceType() == pc::Rook)
+		{
+			if (to.y == 0 && to.x == 0)
+				variables.whiteCastleQueenSideAvailible = false;
+			else if (to.y == 0 && to.x == 7)
+				variables.whiteCastleKingSideAvailible = false;
+			else if (to.y == 7 && to.x == 0)
+				variables.blackCastleQueenSideAvailible = false;
+			else if (to.y == 7 && to.x == 7)
+				variables.blackCastleKingSideAvailible = false;
+		}
+		// perform castling
+		if (arrangement[from.y][from.x]->getPieceType() == pc::King && to.x - from.x == 2)
+			arrangement[from.y][from.x + 1].swap(arrangement[from.y][7]);
+
+		if (arrangement[from.y][from.x]->getPieceType() == pc::King && from.x - to.x == 2)
+			arrangement[from.y][from.x - 1].swap(arrangement[from.y][0]);
+
 		// half move clock
 		if (arrangement[to.y][to.x] != nullptr || arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
 			variables.halfMoveClock = 0;
@@ -219,6 +295,12 @@ public:
 		//swap turn
 		variables.ActiveColor = !variables.ActiveColor;
 		processValidMoves();
+
+		if (whiteKing->isCheckmated(arrangement))
+			std::cout << "black wins\n";
+
+		if (blackKing->isCheckmated(arrangement))
+			std::cout << "white wins\n";
 
 		return true;
 	}
@@ -288,6 +370,11 @@ public:
 		//show variables
 		std::cout << "white king checked: " << whiteKing->isChecked(arrangement) << '\n';
 		std::cout << "black king checked: " << blackKing->isChecked(arrangement) << '\n';
+
+		if (variables.ActiveColor)
+			std::cout << "white move\n";
+		else
+			std::cout << "black move\n";
 	}
 
 	std::string getFEN()
