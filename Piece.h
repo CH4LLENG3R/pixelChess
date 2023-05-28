@@ -56,7 +56,7 @@ public:
 		return std::vector<Position>();
 	};
 
-	Piece() {}
+
 	Piece(Piece& piece): validMoves(piece.validMoves), color(piece.color), taken(piece.taken), pieceType(piece.pieceType), pos(piece.pos)
 	{}
 

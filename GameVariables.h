@@ -13,4 +13,6 @@ struct GameVariables
 	Position enPassant;
 	int halfMoveClock;
 	int fullMoveNumber;
+	bool gameOver;
+	bool whiteWon;
 };

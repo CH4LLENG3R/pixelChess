@@ -25,15 +25,21 @@ protected:
 private:
 	void processValidMoves()
 	{
+		std::vector<Position> moves;
+		Position enPpos;
 		for (std::shared_ptr<Piece> p : arrangementVec)
 		{
 			Piece* piece = p.get();
-			std::vector<Position> moves = piece->getMoves(arrangement);
+
+			if (piece->getColor() != variables.ActiveColor)
+				continue;
+
+			moves = piece->getMoves(arrangement);
 
 			// add en passant moves when available
 			if (variables.enPassantAvailible)
 			{
-				Position enPpos = variables.enPassant;
+				enPpos = variables.enPassant;
 				if (variables.ActiveColor)
 				{
 					if (enPpos.x > 0 && arrangement[enPpos.y - 1][enPpos.x - 1] != nullptr && arrangement[enPpos.y - 1][enPpos.x - 1]->getPieceType() == pc::Pawn && arrangement[enPpos.y - 1][enPpos.x - 1]->getColor() == 1)
@@ -55,65 +61,89 @@ private:
 		}
 
 		// add castling moves when availible
-		std::vector<Position> moves;
+		moves.clear();
 
-		if (variables.whiteCastleKingSideAvailible && whiteKing->isKingSideCastlingAvailible(arrangement))
+		if (variables.ActiveColor)
 		{
-			moves = whiteKing->getMoves(arrangement);
-			moves.push_back(Position(whiteKing->getPosition().x + 2, whiteKing->getPosition().y));
-			whiteKing->setValidMoves(moves);
+			if (variables.whiteCastleKingSideAvailible && whiteKing->isKingSideCastlingAvailible(arrangement))
+			{
+				moves = whiteKing->getMoves(arrangement);
+				moves.push_back(Position(whiteKing->getPosition().x + 2, whiteKing->getPosition().y));
+				whiteKing->setValidMoves(moves);
+			}
+			if (variables.whiteCastleQueenSideAvailible && whiteKing->isQueenSideCastlingAvailible(arrangement))
+			{
+				moves = whiteKing->getMoves(arrangement);
+				moves.push_back(Position(whiteKing->getPosition().x - 2, whiteKing->getPosition().y));
+				whiteKing->setValidMoves(moves);
+			}
 		}
-		if (variables.whiteCastleQueenSideAvailible && whiteKing->isQueenSideCastlingAvailible(arrangement))
+		else
 		{
-			moves = whiteKing->getMoves(arrangement);
-			moves.push_back(Position(whiteKing->getPosition().x - 2, whiteKing->getPosition().y));
-			whiteKing->setValidMoves(moves);
-		}
-
-		if (variables.whiteCastleKingSideAvailible && blackKing->isKingSideCastlingAvailible(arrangement))
-		{
-			moves = blackKing->getMoves(arrangement);
-			moves.push_back(Position(blackKing->getPosition().x + 2, blackKing->getPosition().y));
-			blackKing->setValidMoves(moves);
-		}
-		if (variables.whiteCastleQueenSideAvailible && blackKing->isQueenSideCastlingAvailible(arrangement))
-		{
-			moves = blackKing->getMoves(arrangement);
-			moves.push_back(Position(blackKing->getPosition().x - 2, blackKing->getPosition().y));
-			blackKing->setValidMoves(moves);
+			if (variables.whiteCastleKingSideAvailible && blackKing->isKingSideCastlingAvailible(arrangement))
+			{
+				moves = blackKing->getMoves(arrangement);
+				moves.push_back(Position(blackKing->getPosition().x + 2, blackKing->getPosition().y));
+				blackKing->setValidMoves(moves);
+			}
+			if (variables.whiteCastleQueenSideAvailible && blackKing->isQueenSideCastlingAvailible(arrangement))
+			{
+				moves = blackKing->getMoves(arrangement);
+				moves.push_back(Position(blackKing->getPosition().x - 2, blackKing->getPosition().y));
+				blackKing->setValidMoves(moves);
+			}
 		}
 
 		// check if after move king is checked
-		std::shared_ptr<Piece>** arrangementCpy;
-		arrangementCpy = new std::shared_ptr<Piece>*[8];
-		for (size_t y = 0; y < 8; y++)
-		{
-			arrangementCpy[y] = new std::shared_ptr<Piece>[8];
-			for (size_t x = 0; x < 8; x++)
-			{
-				arrangementCpy[y][x];
-			}
-		}
-
+		std::shared_ptr<Piece> temp;
+		Position tempPos;
+		Position move;
 		for (std::shared_ptr<Piece> p : arrangementVec)
 		{
 			Piece* piece = p.get();
-			if (piece->getColor())
+			std::vector<Position> moves = piece->getMoves(arrangement);
+			for (int i = 0; i < moves.size(); i++)
 			{
-				std::vector<Position> moves = piece->getMoves(arrangement);
-				for (int i = 0; i < moves.size(); i++)
-				{
+				move = moves[i];
+				temp = arrangement[move.y][move.x];
+				tempPos = piece->getPosition();
 
+				arrangement[move.y][move.x].reset();
+				piece->setPosition(move);
+				arrangement[move.y][move.x].swap(arrangement[tempPos.y][tempPos.x]);
+
+				if (piece->getColor() && whiteKing->isChecked(arrangement))
+				{
+					moves.erase(moves.begin() + i);
+					i--;
 				}
+				else if (piece->getColor() == 0 && blackKing->isChecked(arrangement))
+				{
+					moves.erase(moves.begin() + i);
+					i--;
+				}
+
+				piece->setPosition(tempPos);
+				arrangement[move.y][move.x].swap(arrangement[tempPos.y][tempPos.x]);
+				arrangement[move.y][move.x] = temp;
 			}
+			piece->setValidMoves(moves);
 		}
 	}
 
+
+
+public:
 	bool isGameOver()
 	{
-		return false; 
+		return variables.gameOver;
 	}
-public:
+
+	bool gameResult()
+	{
+		return variables.whiteWon;
+	}
+
 	bool isFigure(Position at)
 	{
 		return arrangement[at.y][at.x] != nullptr;
@@ -297,10 +327,19 @@ public:
 		processValidMoves();
 
 		if (whiteKing->isCheckmated(arrangement))
-			std::cout << "black wins\n";
+		{
+			variables.gameOver = true;
+			variables.whiteWon = false;
+		}
 
 		if (blackKing->isCheckmated(arrangement))
-			std::cout << "white wins\n";
+		{
+			{
+				variables.gameOver = true;
+				variables.whiteWon = false;
+			}
+		}
+		
 
 		return true;
 	}
@@ -391,6 +430,8 @@ public:
 		std::string basicFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 		FENHandler fenHandler(basicFEN);
 		variables = fenHandler.getVariables();
+		variables.gameOver = false;
+		variables.whiteWon = false;
 
 		std::vector<Piece*> initialArrangement = fenHandler.getArrangement();
 
