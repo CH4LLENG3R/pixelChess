@@ -7,7 +7,6 @@
 int main()
 {
 	Game game;
-	game.move("dupa");
 	int xf, yf, xt, yt;
 	bool move_OK;
 	char promote_to;

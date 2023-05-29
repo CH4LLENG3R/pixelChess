@@ -10,11 +10,15 @@
 
 #include "Board.h"
 #include "Cursor.h"
+#include "../Game.h"
 
 #define WINDOW_ICON_PATH "Graphics/Icon/Icon16x16.png"
 
 int main()
 {
+    // Setup logic
+    Game game;
+
 
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Close);
@@ -32,12 +36,9 @@ int main()
 
 
     // Object Initialization
-    Board board;
-    board.initialize(BOARD_SIZE, sf::Vector2i({ (SCREEN_WIDTH - BOARD_SIZE) / 2,(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
-
+    Board board(BOARD_SIZE, sf::Vector2i({ (SCREEN_WIDTH - BOARD_SIZE) / 2,(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
 
     Cursor cursor;
-    cursor.initialize();
 
     while (true)
     {

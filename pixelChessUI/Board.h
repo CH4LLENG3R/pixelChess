@@ -31,7 +31,7 @@ public:
 	int squareSize;
 
 	~Board() = default;
-	void initialize(int t_edgeLength, sf::Vector2i t_pos);
+	Board(int t_edgeLength, sf::Vector2i t_pos);
 	void draw(sf::RenderTarget& target, const sf::RenderStates t_states = sf::RenderStates::Default) const override;
 
 };

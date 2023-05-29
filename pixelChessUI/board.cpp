@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-void Board::initialize(int t_edgeLength, sf::Vector2i t_pos)
+Board::Board(int t_edgeLength, sf::Vector2i t_pos)
 {
 	edgeLength = t_edgeLength;
 	pos = t_pos;
