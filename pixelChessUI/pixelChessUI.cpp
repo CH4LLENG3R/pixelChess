@@ -14,6 +14,11 @@
 
 #define WINDOW_ICON_PATH "Graphics/Icon/Icon16x16.png"
 
+void drawFigures(Game& game, sf::RenderTarget& window)
+{
+
+}
+
 int main()
 {
     // Setup logic

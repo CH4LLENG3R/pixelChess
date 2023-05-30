@@ -4,7 +4,7 @@
 class Entity : public sf::Drawable, public sf::Transformable
 {
 	private:
-		short z = 0;
+		short z;
 		sf::Texture texture;
 	protected:
 		mutable sf::Sprite sprite;
@@ -22,5 +22,7 @@ class Entity : public sf::Drawable, public sf::Transformable
 		short getZ() { return z; };
 		
 		void draw(sf::RenderTarget& target, const sf::RenderStates t_states = sf::RenderStates::Default) const override;
+		Entity(): z(0) {};
+		Entity(sf::Texture texture) : z(0) { setTexture(texture); setOriginCentered(); }
 };
 

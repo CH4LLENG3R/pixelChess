@@ -131,23 +131,16 @@ private:
 		}
 	}
 
-
-
 public:
-	bool isGameOver()
-	{
-		return variables.gameOver;
-	}
+	bool isGameOver() { return variables.gameOver; }
 
-	bool gameResult()
-	{
-		return variables.whiteWon;
-	}
+	bool gameResult() { return variables.whiteWon; }
 
-	bool isFigure(Position at)
-	{
-		return arrangement[at.y][at.x] != nullptr;
-	}
+	std::vector<std::shared_ptr<Piece>> getArrangementAsVector() { return arrangementVec; }
+
+	std::shared_ptr<Piece>** getArrangement() { return arrangement; }
+
+	bool isFigure(Position at) { return arrangement[at.y][at.x] != nullptr; }
 
 	std::vector<Position> getPieceMoves(short x, short y)
 	{
@@ -346,7 +339,7 @@ public:
 
 	bool move(std::string AN)
 	{
-		return true;
+		return false;
 	}
 
 	void debug()

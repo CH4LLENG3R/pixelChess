@@ -31,15 +31,15 @@ protected:
 	{}
 public: 
 	void take() { taken = true; };
-	bool isTaken() { return taken; }
-	bool getColor() { return color;  }
+	bool isTaken() const { return taken; }
+	bool getColor() const { return color;  }
 
-	pc::PieceType getPieceType() { return pieceType;  }
+	pc::PieceType getPieceType() const { return pieceType;  }
 
-	Position getPosition() { return pos; }
+	Position getPosition() const { return pos; }
 	void setPosition(const Position& pos) { this->pos = pos; }
 
-	std::vector<Position> getValidMoves() { return validMoves; }
+	std::vector<Position> getValidMoves() const { return validMoves; }
 
 	void setValidMoves(std::vector<Position> validMoves)
 	{
