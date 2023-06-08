@@ -152,13 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="board.cpp" />
-    <ClCompile Include="BoardElement.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="pixelChessUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
-    <ClInclude Include="BoardElement.h" />
+    <ClInclude Include="PossibleMove.h" />
     <ClInclude Include="Consts.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="Entity.h" />

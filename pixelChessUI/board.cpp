@@ -9,8 +9,16 @@ Board::Board(int t_edgeLength, sf::Vector2i t_pos)
 
 	squareSize = t_edgeLength / 8;
 
+	positions = new sf::Vector2f*[8];
+
 	for (int y = 0; y < 8; y++)
-		for (int x = 0; x < 8; x++) position[x][y].pos = sf::Vector2f((squareSize * x) + (squareSize / 2)+ pos.x, (squareSize * y) + (squareSize / 2)+pos.y);
+		positions[y] = new sf::Vector2f[8];
+
+	for (int y = 0; y < 8; y++)
+	{
+		for (int x = 0; x < 8; x++)
+			positions[x][y] = sf::Vector2f((squareSize * x) + (squareSize / 2) + pos.x, (squareSize * y) + (squareSize / 2) + pos.y);
+	}
 	/*for (int y = 0; y < 8; y++)
 	{
 		for (int x = 0; x < 8; x++) std::cout << position[x][y].pos.x << " " << position[x][y].pos.y << "\t";

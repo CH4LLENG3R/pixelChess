@@ -61,8 +61,6 @@ public:
 	{}
 
 	~Piece()
-	{
-		std::cout << "Piece deleted\n";
-	}
+	{}
 };
 

@@ -1,23 +1,13 @@
-#define FRAME_RATE_LIMIT 60
-
-#define SCREEN_WIDTH 900
-#define SCREEN_HEIGHT 900
-
-#define BOARD_SIZE 800
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 #include "Board.h"
 #include "Cursor.h"
+#include "Consts.h"
+#include "GFigure.h"
+#include "PossibleMove.h"
 #include "../Game.h"
 
-#define WINDOW_ICON_PATH "Graphics/Icon/Icon16x16.png"
-
-void drawFigures(Game& game, sf::RenderTarget& window)
-{
-
-}
 
 int main()
 {
@@ -28,6 +18,7 @@ int main()
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Close);
     window.setFramerateLimit(FRAME_RATE_LIMIT);
+    window.setMouseCursorVisible(false);
     sf::Event event;
 
 
@@ -43,8 +34,15 @@ int main()
     // Object Initialization
     Board board(BOARD_SIZE, sf::Vector2i({ (SCREEN_WIDTH - BOARD_SIZE) / 2,(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
 
+    std::vector<GFigure> gfigures;
+    for (std::shared_ptr<Piece> figure : game.getArrangementAsVector())
+        gfigures.push_back(GFigure(figure.get(), board.positions));
+
     Cursor cursor;
 
+    //variables for loop
+    std::vector<Position> validMoves;
+    std::vector<PossibleMove> possibleMoves;
     while (true)
     {
         window.clear(sf::Color::Black);
@@ -63,16 +61,89 @@ int main()
 
             board.draw(window);
 
-/*            for (int z = 0; z < 3; z++)
+            //draw moving figure
+            if (cursor.isClicked() && cursor.isMovingFigure())
             {
-                for (int y = 0; y < 8; y++)
+                gfigures[cursor.getMovingFigureID()].setPosition(cursor.getPosition());
+            }
+            else if (cursor.isClicked())
+            {
+                for (int i = 0; i < gfigures.size(); i++)
                 {
-                    for (int x = 0; x < 8; x++)
+                    if (!gfigures[i].isTaken() && gfigures[i].contains(cursor.getPosition()))
                     {
-
+                        cursor.setMovingFigure(true);
+                        gfigures[i].setPickedUp(true);
+                        cursor.setMovingFigureID(i);
                     }
                 }
-            }*/
+            }
+            else if (!cursor.isClicked() && cursor.isMovingFigure())
+            {
+                GFigure* figure = &gfigures[cursor.getMovingFigureID()];
+                for (int i = 0; i < possibleMoves.size(); i++)
+                {
+                    if (possibleMoves[i].contains(cursor.getPosition()))
+                    {
+                        Position to = possibleMoves[i].getBoardPos();
+                        Position from = figure->getBoardPos();
+
+                        if (game.isPromotion(from, to))
+                        {
+                            game.move(from, to);
+                            gfigures[cursor.getMovingFigureID()] = GFigure(game.getArrangement()[to.y][to.x].get(), board.positions);
+                            figure = &gfigures[cursor.getMovingFigureID()];
+                        }
+                        else
+                            game.move(from, to);
+
+                        game.debug();
+                        std::cout << "FEN: " << game.getFEN() << '\n';
+                        break;
+                    }
+                }
+
+                if (game.isWhiteTurn())
+                    cursor.setWhiteColor();
+                else
+                    cursor.setBlackColor();
+
+                figure->resetPosition(board.positions);
+                figure->setPickedUp(false);
+                cursor.setMovingFigure(false);
+                possibleMoves.clear();
+            }
+
+            //draw standing figures
+            for (int i =0; i<gfigures.size(); i++)
+            {
+                GFigure* figure = &gfigures[i];
+                if (!figure->isPickedUp() && !figure->isTaken())
+                {
+                    figure->resetPosition(board.positions);
+                    figure->draw(window);
+                }
+            }
+
+            //draw possible moves
+            if (cursor.isMovingFigure() && possibleMoves.empty())
+            {
+                validMoves = gfigures[cursor.getMovingFigureID()].getValidMoves();
+                for (int i = 0; i < validMoves.size(); i++)
+                {
+                    PossibleMove pm(Position(validMoves[i].x, validMoves[i].y), board.positions[validMoves[i].x][7 - validMoves[i].y]);
+                    possibleMoves.push_back(pm);
+                }
+            }
+
+            for (int i = 0; i < possibleMoves.size(); i++)
+            {
+                possibleMoves[i].draw(window);
+            }
+
+            //draw picked up figure
+            if(cursor.isMovingFigure())
+                gfigures[cursor.getMovingFigureID()].draw(window);
 
             cursor.update(window);
 

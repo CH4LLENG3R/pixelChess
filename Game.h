@@ -32,7 +32,10 @@ private:
 			Piece* piece = p.get();
 
 			if (piece->getColor() != variables.ActiveColor)
+			{
+				piece->clearValidMoves();
 				continue;
+			}
 
 			moves = piece->getMoves(arrangement);
 
@@ -61,7 +64,6 @@ private:
 		}
 
 		// add castling moves when availible
-		moves.clear();
 
 		if (variables.ActiveColor)
 		{
@@ -80,13 +82,13 @@ private:
 		}
 		else
 		{
-			if (variables.whiteCastleKingSideAvailible && blackKing->isKingSideCastlingAvailible(arrangement))
+			if (variables.blackCastleKingSideAvailible && blackKing->isKingSideCastlingAvailible(arrangement))
 			{
 				moves = blackKing->getMoves(arrangement);
 				moves.push_back(Position(blackKing->getPosition().x + 2, blackKing->getPosition().y));
 				blackKing->setValidMoves(moves);
 			}
-			if (variables.whiteCastleQueenSideAvailible && blackKing->isQueenSideCastlingAvailible(arrangement))
+			if (variables.blackCastleQueenSideAvailible && blackKing->isQueenSideCastlingAvailible(arrangement))
 			{
 				moves = blackKing->getMoves(arrangement);
 				moves.push_back(Position(blackKing->getPosition().x - 2, blackKing->getPosition().y));
@@ -101,7 +103,14 @@ private:
 		for (std::shared_ptr<Piece> p : arrangementVec)
 		{
 			Piece* piece = p.get();
-			std::vector<Position> moves = piece->getMoves(arrangement);
+
+			if (piece->getColor() != variables.ActiveColor)
+			{
+				piece->clearValidMoves();
+				continue;
+			}
+
+			std::vector<Position> moves = piece->getValidMoves();
 			for (int i = 0; i < moves.size(); i++)
 			{
 				move = moves[i];
@@ -136,6 +145,8 @@ public:
 
 	bool gameResult() { return variables.whiteWon; }
 
+	bool isWhiteTurn() { return variables.ActiveColor; }
+
 	std::vector<std::shared_ptr<Piece>> getArrangementAsVector() { return arrangementVec; }
 
 	std::shared_ptr<Piece>** getArrangement() { return arrangement; }
@@ -153,6 +164,17 @@ public:
 	bool isPromotion(Position from, Position to)
 	{
 		if (!isFigure(from))
+			return false;
+
+		if (arrangement[from.y][from.x]->getColor() != variables.ActiveColor)
+			return false;
+
+		bool valid = false;
+		for (Position vp : arrangement[from.y][from.x]->getValidMoves())
+			if (to == vp)
+				valid = true;
+
+		if (valid == false)
 			return false;
 
 		if (arrangement[from.y][from.x]->getPieceType() == pc::Pawn && arrangement[from.y][from.x]->getColor()==1 && to.y == 7)
@@ -183,7 +205,7 @@ public:
 		//update game variables
 
 		//en passant
-		if (to == variables.enPassant && arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
+		if (variables.enPassantAvailible && to == variables.enPassant && arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
 		{
 			if (variables.ActiveColor)
 				arrangement[to.y - 1][to.x].reset();
@@ -262,10 +284,16 @@ public:
 		}
 		// perform castling
 		if (arrangement[from.y][from.x]->getPieceType() == pc::King && to.x - from.x == 2)
+		{
 			arrangement[from.y][from.x + 1].swap(arrangement[from.y][7]);
+			arrangement[from.y][from.x + 1].get()->setPosition(Position(from.x+1, from.y));
+		}
 
 		if (arrangement[from.y][from.x]->getPieceType() == pc::King && from.x - to.x == 2)
+		{
 			arrangement[from.y][from.x - 1].swap(arrangement[from.y][0]);
+			arrangement[from.y][from.x - 1].get()->setPosition(Position(from.x - 1, from.y));
+		}
 
 		// half move clock
 		if (arrangement[to.y][to.x] != nullptr || arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
@@ -327,10 +355,8 @@ public:
 
 		if (blackKing->isCheckmated(arrangement))
 		{
-			{
-				variables.gameOver = true;
-				variables.whiteWon = false;
-			}
+			variables.gameOver = true;
+			variables.whiteWon = false;
 		}
 		
 
@@ -407,6 +433,7 @@ public:
 			std::cout << "white move\n";
 		else
 			std::cout << "black move\n";
+		std::cout << "\n\n\n";
 	}
 
 	std::string getFEN()

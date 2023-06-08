@@ -1,15 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Consts.h"
 #include <iostream>
-
-#define FONT_PATH "Fonts/slkscr.ttf"
-
-#define FIGURE_IMAGE_SIZE 100
-
-struct Positions
-{
-	sf::Vector2f pos;
-};
 
 class Board : public sf::Drawable, public sf::Transformable
 {
@@ -24,13 +16,18 @@ private:
 	int edgeThickness = 4;
 
 	sf::RectangleShape square[32];
-
-public:
-
-	Positions position[8][8];
 	int squareSize;
+public:
+	sf::Vector2f** positions;
+	int getSquareSize() { return squareSize; }
 
-	~Board() = default;
+	~Board()
+	{
+		for (int i = 0; i < 8; i++)
+			delete[] positions[i];
+		delete[] positions;
+	}
+
 	Board(int t_edgeLength, sf::Vector2i t_pos);
 	void draw(sf::RenderTarget& target, const sf::RenderStates t_states = sf::RenderStates::Default) const override;
 

@@ -101,12 +101,11 @@ public:
 			if (arrangement[y][pos.x] == nullptr)
 				continue;
 
-			if (arrangement[y][pos.x].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[y][pos.x].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Rook)
+			if (arrangement[y][pos.x]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		for (short y = pos.y - 1; y >= 0; y--)
@@ -114,12 +113,11 @@ public:
 			if (arrangement[y][pos.x] == nullptr)
 				continue;
 
-			if (arrangement[y][pos.x].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[y][pos.x].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Rook)
+			if (arrangement[y][pos.x]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		//horizontal line check
@@ -128,12 +126,11 @@ public:
 			if (arrangement[pos.y][x] == nullptr)
 				continue;
 
-			if (arrangement[pos.y][x].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[pos.y][x].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Rook)
+			if (arrangement[pos.y][x]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		for (short x = pos.x - 1; x >= 0; x--)
@@ -141,12 +138,11 @@ public:
 			if (arrangement[pos.y][x] == nullptr)
 				continue;
 
-			if (arrangement[pos.y][x].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[pos.y][x].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Rook)
+			if (arrangement[pos.y][x]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		//diagonal line check
@@ -158,12 +154,11 @@ public:
 			if (arrangement[pos.y + i][pos.x + i] == nullptr)
 				continue;
 
-			if (arrangement[pos.y + i][pos.x + i].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[pos.y + i][pos.x + i].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Bishop)
+			if (arrangement[pos.y + i][pos.x + i]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		for (short i = 1; i < 8; i++)
@@ -174,12 +169,11 @@ public:
 			if (arrangement[pos.y - i][pos.x - i] == nullptr)
 				continue;
 
-			if (arrangement[pos.y - i][pos.x - i].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[pos.y - i][pos.x - i].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Bishop)
+			if (arrangement[pos.y - i][pos.x - i]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		for (short i = 1; i < 8; i++)
@@ -190,12 +184,11 @@ public:
 			if (arrangement[pos.y + i][pos.x - i] == nullptr)
 				continue;
 
-			if (arrangement[pos.y + i][pos.x - i].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[pos.y + i][pos.x - i].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Bishop)
+			if (arrangement[pos.y + i][pos.x - i]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		for (short i = 1; i < 8; i++)
@@ -206,12 +199,11 @@ public:
 			if (arrangement[pos.y - i][pos.x + i] == nullptr)
 				continue;
 
-			if (arrangement[pos.y - i][pos.x + i].get()->getColor() == color)
-				break;
-
 			otherType = arrangement[pos.y - i][pos.x + i].get()->getPieceType();
-			if (otherType == pc::Queen || otherType == pc::Bishop)
+			if (arrangement[pos.y - i][pos.x + i]->getColor() != this->color && (otherType == pc::Queen || otherType == pc::Rook))
 				return true;
+
+			break;
 		}
 
 		return false;
