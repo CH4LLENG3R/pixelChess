@@ -2,12 +2,12 @@
 #include <iostream>
 
 #include "Board.h"
+#include "PromotionDialog.h"
 #include "Cursor.h"
 #include "Consts.h"
 #include "GFigure.h"
 #include "PossibleMove.h"
 #include "../Game.h"
-
 
 int main()
 {
@@ -16,9 +16,10 @@ int main()
 
 
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Fullscreen);
     window.setFramerateLimit(FRAME_RATE_LIMIT);
     window.setMouseCursorVisible(false);
+    window.setFramerateLimit(60);
     sf::Event event;
 
 
@@ -32,23 +33,32 @@ int main()
 
 
     // Object Initialization
-    Board board(BOARD_SIZE, sf::Vector2i({ (SCREEN_WIDTH - BOARD_SIZE) / 2,(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
+    Board board(BOARD_SIZE, sf::Vector2i({ ((SCREEN_WIDTH - BOARD_SIZE) / 2),(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
+
+    PromotionDialog promotionDialog(game.isWhiteTurn(), false);
 
     std::vector<GFigure> gfigures;
     for (std::shared_ptr<Piece> figure : game.getArrangementAsVector())
         gfigures.push_back(GFigure(figure.get(), board.positions));
 
     Cursor cursor;
+    if(!game.isWhiteTurn())
+        cursor.setBlackColor();
 
     //variables for loop
     std::vector<Position> validMoves;
     std::vector<PossibleMove> possibleMoves;
+
+    char promotionVariant;
+    bool promotion = false;
+    Position from;
+    Position to;
     while (true)
     {
         window.clear(sf::Color::Black);
         window.pollEvent(event);
 
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
         {
 
             window.close();
@@ -61,6 +71,20 @@ int main()
 
             board.draw(window);
 
+            promotionVariant = promotionDialog.update(cursor);
+            if (promotionVariant != 'E')
+            {
+                game.move(from, to, promotionVariant);
+                gfigures[cursor.getMovingFigureID()] = GFigure(game.getArrangement()[to.y][to.x].get(), board.positions);
+                promotionDialog.hide();
+
+                if (game.isWhiteTurn())
+                    cursor.setWhiteColor();
+                else
+                    cursor.setBlackColor();
+            }
+
+            promotionDialog.draw(window);
             //draw moving figure
             if (cursor.isClicked() && cursor.isMovingFigure())
             {
@@ -85,20 +109,27 @@ int main()
                 {
                     if (possibleMoves[i].contains(cursor.getPosition()))
                     {
-                        Position to = possibleMoves[i].getBoardPos();
-                        Position from = figure->getBoardPos();
+                        to = possibleMoves[i].getBoardPos();
+                        from = figure->getBoardPos();
 
                         if (game.isPromotion(from, to))
                         {
-                            game.move(from, to);
-                            gfigures[cursor.getMovingFigureID()] = GFigure(game.getArrangement()[to.y][to.x].get(), board.positions);
-                            figure = &gfigures[cursor.getMovingFigureID()];
+                            promotion = true;
+                            promotionDialog.setActiveColor(game.isWhiteTurn());
+                            promotionDialog.show();
+                            figure->setPosition(board.positions[to.x][to.y]);
+                            //gfigures[cursor.getMovingFigureID()] = GFigure(game.getArrangement()[to.y][to.x].get(), board.positions);
+                            //figure = &gfigures[cursor.getMovingFigureID()];
                         }
                         else
-                            game.move(from, to);
+                        {
+                            if (!game.move(from, to))
+                                throw new std::exception("ERROR: Incorrect move occured!");
+                            figure->resetPosition(board.positions);
+
+                        }
 
                         game.debug();
-                        std::cout << "FEN: " << game.getFEN() << '\n';
                         break;
                     }
                 }
@@ -107,8 +138,6 @@ int main()
                     cursor.setWhiteColor();
                 else
                     cursor.setBlackColor();
-
-                figure->resetPosition(board.positions);
                 figure->setPickedUp(false);
                 cursor.setMovingFigure(false);
                 possibleMoves.clear();

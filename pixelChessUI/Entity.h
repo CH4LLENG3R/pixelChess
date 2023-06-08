@@ -24,6 +24,7 @@ class Entity : public sf::Drawable, public sf::Transformable
 		
 		bool contains(const Position& pos) { return sprite.getGlobalBounds().contains(float(pos.x), float(pos.y)); }
 		bool contains(const sf::Vector2f& pos) { return sprite.getGlobalBounds().contains(pos); }
+		void setPosition(const sf::Vector2f& pos) { sprite.setPosition(pos); }
 
 		void draw(sf::RenderTarget& target, const sf::RenderStates t_states = sf::RenderStates::Default) const override
 		{
@@ -32,5 +33,6 @@ class Entity : public sf::Drawable, public sf::Transformable
 		}
 		Entity(): z(0) {};
 		Entity(sf::Texture texture) : z(0) { setTexture(texture); setOriginCentered(); }
+		Entity(std::string texture_path) : z(0) { texture.loadFromFile(texture_path); }
 };
 

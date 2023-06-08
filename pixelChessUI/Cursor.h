@@ -30,8 +30,8 @@ class Cursor : protected Entity
 
 		void setMovingFigure(bool value) { movingFigure = value; };
 		bool isMovingFigure() { return movingFigure; };
-		bool isClicked() { return clicked; };
-		sf::Vector2f getPosition() { return sprite.getPosition();  };
+		bool isClicked() const { return clicked; };
+		sf::Vector2f getPosition() const { return sprite.getPosition();  };
 
 		void setWhiteColor()
 		{

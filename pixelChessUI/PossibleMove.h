@@ -18,6 +18,7 @@ public:
 		else std::cout << "[WARNING]: Image not found: " << POSSIBLE_MOVE_TEXTURE_PATH << '\n';
 		setOriginCentered();
 		sprite.setPosition(pos);
+		sprite.setScale(FIGURE_TEXTURE_SIZE / 100.0, FIGURE_TEXTURE_SIZE / 100.0);
 	}
 	Position getBoardPos() { return boardPos; }
 	

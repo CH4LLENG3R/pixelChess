@@ -93,5 +93,7 @@ public:
 		this->setTexture(texture);
 		this->setOriginCentered();
 		sprite.setTexture(texture);
+		sprite.setScale( FIGURE_TEXTURE_SIZE / 100.0, FIGURE_TEXTURE_SIZE / 100.0);
+
 	}
 };

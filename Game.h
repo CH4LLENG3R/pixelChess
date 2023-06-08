@@ -208,9 +208,15 @@ public:
 		if (variables.enPassantAvailible && to == variables.enPassant && arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
 		{
 			if (variables.ActiveColor)
+			{
+				arrangement[to.y - 1][to.x]->take();
 				arrangement[to.y - 1][to.x].reset();
+			}
 			else
+			{
+				arrangement[to.y + 1][to.x]->take();
 				arrangement[to.y + 1][to.x].reset();
+			}
 		}
 
 		if (arrangement[from.y][from.x]->getPieceType() == pc::Pawn)
@@ -426,6 +432,8 @@ public:
 		std::cout << '\n';
 
 		//show variables
+		std::cout << getFEN() << '\n';
+
 		std::cout << "white king checked: " << whiteKing->isChecked(arrangement) << '\n';
 		std::cout << "black king checked: " << blackKing->isChecked(arrangement) << '\n';
 
