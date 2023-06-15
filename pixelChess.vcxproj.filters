@@ -16,6 +16,9 @@
     <Filter Include="Header Files\BoardElement">
       <UniqueIdentifier>{2032a03a-9402-4494-bc99-509a9f8ff070}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Timing">
+      <UniqueIdentifier>{2f8cd3b8-0172-4029-aa5f-b2d57ba0dff2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pixelChess.cpp">
@@ -23,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Clock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -55,6 +55,12 @@
     </ClInclude>
     <ClInclude Include="PieceTypes.h">
       <Filter>Header Files\BoardElement</Filter>
+    </ClInclude>
+    <ClInclude Include="Timestamp.h">
+      <Filter>Header Files\Timing</Filter>
+    </ClInclude>
+    <ClInclude Include="Clock.h">
+      <Filter>Header Files\Timing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
