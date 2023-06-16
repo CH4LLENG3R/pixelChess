@@ -32,4 +32,12 @@ public:
 	}
 
 	Timestamp(short hour, short minute, short second) : hour(hour), minute(minute), second(second) {};
+
+	friend std::ostream& operator<<(std::ostream& os, const Timestamp& dt);
 };
+
+std::ostream& operator<<(std::ostream& os, const Timestamp& dt)
+{
+	os << dt.hour << " : " << dt.minute << " : " << dt.second;
+	return os;
+}

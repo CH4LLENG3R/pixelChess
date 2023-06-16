@@ -21,15 +21,15 @@ public:
 	sf::Vector2f** positions;
 	int getSquareSize() { return squareSize; }
 
+	void draw(sf::RenderTarget& target, const sf::RenderStates t_states = sf::RenderStates::Default) const override;
+
+	Board(int t_edgeLength, sf::Vector2i t_pos);
+
 	~Board()
 	{
 		for (int i = 0; i < 8; i++)
 			delete[] positions[i];
 		delete[] positions;
 	}
-
-	Board(int t_edgeLength, sf::Vector2i t_pos);
-	void draw(sf::RenderTarget& target, const sf::RenderStates t_states = sf::RenderStates::Default) const override;
-
 };
 

@@ -14,7 +14,6 @@ int main()
     // Setup logic
     Game game;
 
-
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Fullscreen);
     window.setFramerateLimit(FRAME_RATE_LIMIT);
