@@ -7,6 +7,7 @@ class Settings
 	int blackTime;
 	bool saveHistory;
 	std::string historyPath;
+	bool automaticClock;
 public:
 	Settings(const int& whiteTime, const int& blackTime, const bool& saveHistory, std::string historyPath): whiteTime(whiteTime), blackTime(blackTime), saveHistory(saveHistory), historyPath(historyPath)
 	{}

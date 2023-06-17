@@ -9,29 +9,14 @@
 #include "PossibleMove.h"
 #include "../Game.h"
 
-int main()
+void game(sf::RenderWindow& window, Cursor& cursor)
 {
     // Setup logic
     Game game;
 
-    // Create the main window
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Fullscreen);
-    window.setFramerateLimit(FRAME_RATE_LIMIT);
-    window.setMouseCursorVisible(false);
-    window.setFramerateLimit(60);
+    // Object Initialization
     sf::Event event;
 
-
-    // Icon Setup
-    sf::Image icon;
-    if (!(icon.loadFromFile(WINDOW_ICON_PATH))) // rethink
-    {
-        std::cout << "[WARNING]: Image not found: " << WINDOW_ICON_PATH << '\n';
-    }
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-
-
-    // Object Initialization
     Board board(BOARD_SIZE, sf::Vector2i({ ((SCREEN_WIDTH - BOARD_SIZE) / 2),(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
 
     PromotionDialog promotionDialog(game.isWhiteTurn(), false);
@@ -40,8 +25,9 @@ int main()
     for (std::shared_ptr<Piece> figure : game.getArrangementAsVector())
         gfigures.push_back(GFigure(figure.get(), board.positions));
 
-    Cursor cursor;
-    if(!game.isWhiteTurn())
+    if (game.isWhiteTurn())
+        cursor.setWhiteColor();
+    else
         cursor.setBlackColor();
 
     //variables for loop
@@ -143,7 +129,7 @@ int main()
             }
 
             //draw standing figures
-            for (int i =0; i<gfigures.size(); i++)
+            for (int i = 0; i < gfigures.size(); i++)
             {
                 GFigure* figure = &gfigures[i];
                 if (!figure->isPickedUp() && !figure->isTaken())
@@ -170,7 +156,7 @@ int main()
             }
 
             //draw picked up figure
-            if(cursor.isMovingFigure())
+            if (cursor.isMovingFigure())
                 gfigures[cursor.getMovingFigureID()].draw(window);
 
             cursor.update(window);
@@ -179,6 +165,48 @@ int main()
 
         window.display();
     }
+}
+void menu(sf::RenderWindow& window, Cursor& cursor)
+{
+    sf::Event event;
+
+    while (true)
+    {
+        window.clear(sf::Color::Black);
+        window.pollEvent(event);
+
+        if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
+        {
+
+            window.close();
+            std::cout << "[INFO]: Window closed.\n";
+            break;
+
+        }
+        cursor.update(window);
+        window.display();
+    }
+}
+int main()
+{
+    // Create the main window
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Chess", sf::Style::Fullscreen);
+    window.setFramerateLimit(FRAME_RATE_LIMIT);
+    window.setMouseCursorVisible(false);
+    window.setFramerateLimit(60);
+
+    // Cursor
+    Cursor cursor;
+
+    // Icon Setup
+    sf::Image icon;
+    if (!(icon.loadFromFile(WINDOW_ICON_PATH)))
+    {
+        std::cout << "[WARNING]: Image not found: " << WINDOW_ICON_PATH << '\n';
+    }
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
+    game(window, cursor);
 
     return EXIT_SUCCESS;
 }
