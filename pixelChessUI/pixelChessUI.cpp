@@ -8,6 +8,7 @@
 #include "GFigure.h"
 #include "PossibleMove.h"
 #include "../Game.h"
+#include "ResultPrompt.h"
 
 void game(sf::RenderWindow& window, Cursor& cursor)
 {
@@ -38,6 +39,8 @@ void game(sf::RenderWindow& window, Cursor& cursor)
     bool promotion = false;
     Position from;
     Position to;
+    ResultPrompt* resPromptWhite = ResultPrompt::getInstance(sf::Vector2f(SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0), sf::Vector2f(300, 100), 1);
+    ResultPrompt* resPromptBlack = ResultPrompt::getBlackInstance();
     while (true)
     {
         window.clear(sf::Color::Black);
@@ -158,6 +161,15 @@ void game(sf::RenderWindow& window, Cursor& cursor)
             //draw picked up figure
             if (cursor.isMovingFigure())
                 gfigures[cursor.getMovingFigureID()].draw(window);
+
+            if (game.isGameOver())
+            {
+                if (game.gameResult())
+                    resPromptWhite->draw(window);
+                else
+                    resPromptBlack->draw(window);
+                
+            }
 
             cursor.update(window);
 

@@ -362,7 +362,7 @@ public:
 		if (blackKing->isCheckmated(arrangement))
 		{
 			variables.gameOver = true;
-			variables.whiteWon = false;
+			variables.whiteWon = true;
 		}
 		
 
