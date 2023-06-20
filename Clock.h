@@ -7,6 +7,7 @@ class Clock
 	Timestamp blackTime;
 	bool activeColor;
 	bool terminate;
+	bool running;
 	std::thread clockThread;
 
 	void update()
@@ -31,15 +32,27 @@ public:
 
 	void setActiveColor(bool activeColor) { this->activeColor = activeColor; }
 
-	Clock(Timestamp whiteTime, Timestamp blackTime) : whiteTime(whiteTime), blackTime(blackTime), activeColor(1), terminate(false)
+	void start()
 	{
-		clockThread = std::thread(&Clock::update, this);
+		if (!running)
+		{
+			clockThread = std::thread(&Clock::update, this);
+			running = true;
+		}
+	}
+
+	Clock(Timestamp whiteTime, Timestamp blackTime, bool start = false) : whiteTime(whiteTime), blackTime(blackTime), activeColor(1), terminate(false)
+	{
+		running = false;
+		if (start)
+			this->start();
 	};
 
 	~Clock()
 	{
 		terminate = true;
-		clockThread.join();
+		if(running)
+			clockThread.join();
 	}
 };
 

@@ -233,11 +233,6 @@ public:
 			return false;
 		}
 	}
-
-	bool isCheckmated(std::shared_ptr<Piece>** arrangement)
-	{
-		return isChecked(arrangement) && validMoves.empty();
-	}
 };
 
 class Queen : public Piece

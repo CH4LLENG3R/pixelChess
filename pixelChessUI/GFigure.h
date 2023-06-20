@@ -19,7 +19,7 @@ public:
 	bool isTaken() { return piece->isTaken(); }
 	bool isPickedUp() { return pickedUp; }
 	void setPickedUp(const bool pickedUp) { this->pickedUp = pickedUp; }
-
+	bool getColor() { return piece->getColor(); }
 	void setPosition(sf::Vector2f pos)
 	{
 		sprite.setPosition(pos);

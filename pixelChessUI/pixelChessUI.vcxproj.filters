@@ -16,6 +16,9 @@
     <Filter Include="Header Files\UIParts">
       <UniqueIdentifier>{d71a2adc-d9a6-4d26-8177-aa257fecf0e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{47f765f3-dc79-43ca-9a59-c54e89d23991}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pixelChessUI.cpp">
@@ -26,12 +29,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Board.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PossibleMove.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -41,13 +38,34 @@
     <ClInclude Include="Cursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResultPrompt.h">
+      <Filter>Header Files\UIParts</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files\UIParts</Filter>
+    </ClInclude>
     <ClInclude Include="GFigure.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="PossibleMove.h">
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="PromotionDialog.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="ResultPrompt.h">
+    <ClInclude Include="Board.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GClock.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="TextInput.h">
+      <Filter>Header Files\UIParts</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeInput.h">
+      <Filter>Header Files\UIParts</Filter>
+    </ClInclude>
+    <ClInclude Include="Checkbox.h">
       <Filter>Header Files\UIParts</Filter>
     </ClInclude>
   </ItemGroup>

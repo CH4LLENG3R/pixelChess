@@ -30,7 +30,7 @@ public:
 			return true;
 		return false;
 	}
-
+	Timestamp(){}
 	Timestamp(short hour, short minute, short second) : hour(hour), minute(minute), second(second) {};
 
 	friend std::ostream& operator<<(std::ostream& os, const Timestamp& dt);

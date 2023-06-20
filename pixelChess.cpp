@@ -5,22 +5,30 @@
 
 #include "Game.h"
 #include "Clock.h"
-//clock
+
+//game history
 int main()
 {
-	Timestamp whiteTime(0, 10, 0);
-	Timestamp blackTime(0, 10, 0);
-	Clock clock(whiteTime, blackTime);
-	for (int i = 0; i < 100; i++)
-	{
-		system("cls");
-		std::cout << "frame: " << i << '\n';
-		std::cout << "white:" << clock.getWhiteTime() << '\n';
-		std::cout << "black:" << clock.getBlackTime() << '\n';
-		Sleep(100);
-	}
+
 	return 0;
 }
+
+////clock
+//int main()
+//{
+//	Timestamp whiteTime(0, 10, 0);
+//	Timestamp blackTime(0, 10, 0);
+//	Clock clock(whiteTime, blackTime);
+//	for (int i = 0; i < 100; i++)
+//	{
+//		system("cls");
+//		std::cout << "frame: " << i << '\n';
+//		std::cout << "white:" << clock.getWhiteTime() << '\n';
+//		std::cout << "black:" << clock.getBlackTime() << '\n';
+//		Sleep(100);
+//	}
+//	return 0;
+//}
 
 //// logic
 //int main()

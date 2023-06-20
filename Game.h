@@ -100,6 +100,7 @@ private:
 		std::shared_ptr<Piece> temp;
 		Position tempPos;
 		Position move;
+		int movesCount = 0;
 		for (std::shared_ptr<Piece> p : arrangementVec)
 		{
 			Piece* piece = p.get();
@@ -137,6 +138,16 @@ private:
 				arrangement[move.y][move.x] = temp;
 			}
 			piece->setValidMoves(moves);
+			movesCount += moves.size();
+		}
+
+		if (movesCount == 0)
+		{
+			variables.gameOver = true;
+			if (variables.ActiveColor)
+				variables.whiteWon = false;
+			else
+				variables.whiteWon = true;
 		}
 	}
 
@@ -352,18 +363,6 @@ public:
 		//swap turn
 		variables.ActiveColor = !variables.ActiveColor;
 		processValidMoves();
-
-		if (whiteKing->isCheckmated(arrangement))
-		{
-			variables.gameOver = true;
-			variables.whiteWon = false;
-		}
-
-		if (blackKing->isCheckmated(arrangement))
-		{
-			variables.gameOver = true;
-			variables.whiteWon = true;
-		}
 		
 
 		return true;
@@ -449,14 +448,13 @@ public:
 		return FENHandler::getFEN(arrangement, variables);
 	}
 
-	Game()
+	Game(std::string fen)
 	{
 		arrangement = new std::shared_ptr<Piece>*[8];
 		for (size_t i = 0; i < 8; i++)
 			arrangement[i] = new std::shared_ptr<Piece>[8];
 
-		std::string basicFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-		FENHandler fenHandler(basicFEN);
+		FENHandler fenHandler(fen);
 		variables = fenHandler.getVariables();
 		variables.gameOver = false;
 		variables.whiteWon = false;
@@ -483,6 +481,9 @@ public:
 
 		processValidMoves();
 	}
+
+	Game() : Game("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	{}
 
 	~Game()
 	{

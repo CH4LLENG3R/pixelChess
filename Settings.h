@@ -1,19 +1,21 @@
 #pragma once
 #include <string>
 
+#include "Timestamp.h"
 class Settings
 {
-	int whiteTime;
-	int blackTime;
+	Timestamp whiteTime;
+	Timestamp blackTime;
 	bool saveHistory;
-	std::string historyPath;
-	bool automaticClock;
+	std::string gameName;
+	bool allowUndo;
 public:
-	Settings(const int& whiteTime, const int& blackTime, const bool& saveHistory, std::string historyPath): whiteTime(whiteTime), blackTime(blackTime), saveHistory(saveHistory), historyPath(historyPath)
+	Settings() {};
+	Settings(Timestamp whiteTime, Timestamp blackTime, const bool& saveHistory, const bool& allowUndo, std::string gameName): whiteTime(whiteTime), blackTime(blackTime), saveHistory(saveHistory), gameName(gameName), allowUndo(allowUndo)
 	{}
 	
-	int getWhiteTime() { return whiteTime; }
-	int getBlackTime() { return blackTime; }
+	Timestamp getWhiteTime() { return whiteTime; }
+	Timestamp getBlackTime() { return blackTime; }
 	int getSaveHistory() { return saveHistory; }
-	std::string getHistoryPath() { return historyPath;  }
+	std::string getGameName() { return gameName;  }
 };
