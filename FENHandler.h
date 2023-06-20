@@ -86,7 +86,10 @@ public:
 			default:
 				int number = FEN[i] - 48;
 				if (number >= 0 && number <= 8)
+				{
 					x += number;
+					continue;
+				}
 			}
 			if (arrangementEnd)
 				break;
@@ -138,9 +141,9 @@ public:
 		if (FEN[i] != '-')
 		{
 			variables.enPassantAvailible = true;
-			variables.enPassant = Position(FEN[i] - 'a', FEN[++i] - 49);
+			variables.enPassant = Position(FEN[i] - 'a', FEN[i+1] - 49);
 		}
-		i++;
+		i+=2;
 
 		//get halfmove clock
 		variables.halfMoveClock = 0;

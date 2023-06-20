@@ -25,14 +25,15 @@ enum class ProgramVariation
     Exit,
 };
 
-ProgramVariation game(sf::RenderWindow& window, Cursor& cursor)
+ProgramVariation game(sf::RenderWindow& window, Cursor& cursor, Settings& settings)
 {
     // Setup logic
-    Game game;
+    GameHistory gameHistory(settings);
+    Game game(gameHistory.getlastmove());
 
     // Object Initialization
     sf::Event event;
-    GClock gclock(Timestamp(0, 10, 0), Timestamp(0, 10, 0));
+    GClock gclock(settings.getWhiteTime(), settings.getBlackTime());
     gclock.setActiveColor(game.isWhiteTurn());
 
     Board board(BOARD_SIZE, sf::Vector2i({ ((SCREEN_WIDTH - BOARD_SIZE) / 2),(SCREEN_HEIGHT - BOARD_SIZE) / 2 }));
@@ -88,6 +89,7 @@ ProgramVariation game(sf::RenderWindow& window, Cursor& cursor)
                     cursor.setWhiteColor();
                 else
                     cursor.setBlackColor();
+                gameHistory.append(game.getFEN());
             }
 
             promotionDialog.draw(window);
@@ -130,7 +132,9 @@ ProgramVariation game(sf::RenderWindow& window, Cursor& cursor)
                         }
                         else
                         {
-                            if (!game.move(from, to))
+                            if (game.move(from, to))
+                                gameHistory.append(game.getFEN());
+                            else
                                 throw new std::exception("ERROR: Incorrect move occured!");
                             figure->resetPosition(board.positions);
 
@@ -147,6 +151,8 @@ ProgramVariation game(sf::RenderWindow& window, Cursor& cursor)
                     cursor.setBlackColor();
 
                 gclock.setActiveColor(game.isWhiteTurn());
+                GameHistory::saveSettings(settings);
+
                 figure->setPickedUp(false);
                 cursor.setMovingFigure(false);
                 possibleMoves.clear();
@@ -195,7 +201,11 @@ ProgramVariation game(sf::RenderWindow& window, Cursor& cursor)
                 
             }
             else
+            {
                 gclock.update();
+                settings.setWhiteTime(gclock.getWhiteTime());
+                settings.setBlackTime(gclock.getBlackTime());
+            }
             
             gclock.draw(window);
 
@@ -334,7 +344,7 @@ std::pair<ProgramVariation, Settings> newGame(sf::RenderWindow& window, Cursor& 
         window.display();
     }
 }
-std::pair<ProgramVariation, std::string> loadGame(sf::RenderWindow& window, Cursor& cursor)
+std::pair<ProgramVariation, Settings> loadGame(sf::RenderWindow& window, Cursor& cursor)
 {
     std::vector<std::string> games = GameHistory::getAvailibleGames();
     std::vector<sf::Vector2f> positions;
@@ -359,13 +369,14 @@ std::pair<ProgramVariation, std::string> loadGame(sf::RenderWindow& window, Curs
 
             window.close();
             std::cout << "[INFO]: Window closed.\n";
-            return std::pair<ProgramVariation, std::string>(ProgramVariation::Exit, "");
+            return std::pair<ProgramVariation, Settings>(ProgramVariation::Exit, Settings());
 
         }
         for (int i = posOnList; i < posOnList + listLength && i < games.size(); i++)
         {
             Button option(std::to_string(i+1) + ": " + games[i], positions[i-posOnList], sf::Vector2f(500, 40));
-            option.update(cursor);
+            if (option.update(cursor))
+                return std::pair<ProgramVariation, Settings>(ProgramVariation::LoadGame, GameHistory::getSettings(games[i]));
             option.draw(window);
         }
 
@@ -382,7 +393,7 @@ std::pair<ProgramVariation, std::string> loadGame(sf::RenderWindow& window, Curs
         scrollDown.draw(window);
 
         if (returnButton.update(cursor))
-            return std::pair<ProgramVariation, std::string>(ProgramVariation::Menu, "");
+            return std::pair<ProgramVariation, Settings>(ProgramVariation::Menu, Settings());
         returnButton.draw(window);
 
         cursor.update(window);
@@ -410,7 +421,8 @@ int main()
 
     ProgramVariation pv;
     std::pair<ProgramVariation, Settings> newGameRes;
-    std::pair<ProgramVariation, std::string> loadGameRes;
+    std::pair<ProgramVariation, Settings> loadGameRes;
+    Settings gameSettings;
     while (true)
     {
         pv = menu(window, cursor);
@@ -423,6 +435,8 @@ int main()
                 return EXIT_SUCCESS;
             else if (newGameRes.first == ProgramVariation::Menu)
                 continue;
+            else if (newGameRes.first == ProgramVariation::NewGame)
+                gameSettings = newGameRes.second;
         }
         else if (pv == ProgramVariation::LoadGame)
         {
@@ -431,10 +445,12 @@ int main()
                 return EXIT_SUCCESS;
             else if (loadGameRes.first == ProgramVariation::Menu)
                 continue;
+            else if (loadGameRes.first == ProgramVariation::LoadGame)
+                gameSettings = loadGameRes.second;
         }
 
 
-        pv = game(window, cursor);
+        pv = game(window, cursor, gameSettings);
         if (pv == ProgramVariation::Exit)
             return EXIT_SUCCESS;
     }

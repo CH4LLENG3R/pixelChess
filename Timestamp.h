@@ -5,9 +5,9 @@ class Timestamp
 	short minute;
 	short second;
 public:
-	short getHour() { return hour; }
-	short getMinute() { return minute; }
-	short getSecond() { return second; }
+	short getHour() const { return hour; }
+	short getMinute() const { return minute; }
+	short getSecond() const { return second; }
 
 	void decrement()
 	{

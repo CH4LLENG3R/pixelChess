@@ -3,11 +3,10 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include "Settings.h"
 class GameHistory
 {
-	std::fstream file;
 	std::string path;
-	std::string gamename;
 	std::string historyfullpath;
 	std::vector<std::string> fens;
 public:
@@ -31,6 +30,26 @@ public:
 		return res;
 	}
 
+	static void saveSettings(Settings set)
+	{
+		std::ofstream file_temp;
+		file_temp.open("saves/" + set.getGameName() + "/settings.txt");
+		file_temp << set;
+	}
+
+
+	static Settings getSettings(std::string gameName)
+	{
+		std::ifstream file_temp;
+		file_temp.open("saves/" + gameName + "/settings.txt");
+		Settings set;
+		file_temp >> set;
+		file_temp.close();
+		set.setGameName(gameName);
+		return set;
+	}
+
+
 	std::string getlastmove()
 	{
 		return fens.back();
@@ -38,8 +57,9 @@ public:
 
 	void append(std::string fen)
 	{
-		file.open(historyfullpath);
 		fens.push_back(fen);
+		std::ofstream file;
+		file.open(historyfullpath);
 		std::vector<std::string>::iterator itr;
 
 		for (itr = fens.begin(); itr != fens.end(); itr++)
@@ -50,35 +70,15 @@ public:
 		file.close();
 	}
 
-	GameHistory()
+	GameHistory(Settings settings)
 	{
 		path = "saves/";
-		if (!std::filesystem::exists(path))
-			std::filesystem::create_directories(path);
+		historyfullpath = path + settings.getGameName() + "/history.txt";
 
-		for (int i = 0; ; i++)
+
+		if (std::filesystem::exists(historyfullpath))
 		{
-			if (!std::filesystem::exists(path + "game" + std::to_string(i)))
-			{
-				std::filesystem::create_directories(path + "game" + std::to_string(i));
-				gamename = "game" + std::to_string(i);
-				break;
-			}
-		}
-
-		historyfullpath = path + gamename + "/history.txt";
-/*		file.open(historyfullpath);
-		file << fen << '\n';
-		file.close()*/;
-
-	}
-
-	GameHistory(std::string gamename)
-	{
-
-		if (std::filesystem::exists(path + gamename + "history.txt"))
-		{
-			historyfullpath = path + gamename + "/history.txt";
+			std::ifstream file;
 			file.open(historyfullpath);
 
 			std::string str;
@@ -87,11 +87,17 @@ public:
 				if (str.size() > 0)
 					fens.push_back(str);
 			}
+			file.close();
 		}
-	}
-
-	~GameHistory()
-	{
-		file.close();
+		else
+		{
+			std::filesystem::create_directories(path + settings.getGameName());
+			fens.push_back("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+			std::ofstream file;
+			file.open(historyfullpath);
+			file << fens.back() << '\n';
+			file.close();
+			saveSettings(settings);
+		}
 	}
 };
