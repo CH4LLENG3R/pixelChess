@@ -7,7 +7,6 @@
 #include "Settings.h"
 #include "Clock.h"
 #include "GameHistory.h"
-#include "InputHandler.h"
 #include "Piece.h"
 #include "Figures.h"
 #include "PieceTypes.h"

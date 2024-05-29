@@ -166,7 +166,7 @@ public:
 		}
 	}
 
-	static std::string getFEN(std::shared_ptr<Piece>** arrangement,const GameVariables& variables)
+	static std::string getFEN(std::shared_ptr<Piece>** arrangement, const GameVariables& variables)
 	{
 		std::string FEN;
 		int freeSpaces;

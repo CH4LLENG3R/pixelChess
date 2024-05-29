@@ -217,6 +217,7 @@ ProgramVariation game(sf::RenderWindow& window, Cursor& cursor, Settings& settin
     }
     return ProgramVariation::Menu;
 }
+
 ProgramVariation menu(sf::RenderWindow& window, Cursor& cursor)
 {
     sf::Event event;
@@ -270,6 +271,7 @@ ProgramVariation menu(sf::RenderWindow& window, Cursor& cursor)
         window.display();
     }
 }
+
 std::pair<ProgramVariation, Settings> newGame(sf::RenderWindow& window, Cursor& cursor)
 {
     sf::Event event;
@@ -344,6 +346,7 @@ std::pair<ProgramVariation, Settings> newGame(sf::RenderWindow& window, Cursor& 
         window.display();
     }
 }
+
 std::pair<ProgramVariation, Settings> loadGame(sf::RenderWindow& window, Cursor& cursor)
 {
     std::vector<std::string> games = GameHistory::getAvailibleGames();
@@ -400,6 +403,7 @@ std::pair<ProgramVariation, Settings> loadGame(sf::RenderWindow& window, Cursor&
         window.display();
     }
 }
+
 int main()
 {
     // Create the main window
